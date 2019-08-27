@@ -14,29 +14,29 @@ class City:
 def find_city(all_cities, city):
     return next(x for x in all_cities if x.name == city)
 
-# Funcao que ira listar os vizinhos de cada cidade
+
 def verify_neighbors(all_cities):
+    """
+    Evaluates neighbors of each city
+    :param all_cities: list containing all cities objects
+    :return: list of lists containing neighbors id's
+    """
     n = len(all_cities)
-    neighbors = []
+    # Neighbors of first and second cities (id = 1 and 2). Position 0 and 1 in list neighbors.
+    neighbors = [[2, 3], [1, 4]]
 
-    for i in range(n):
+    for i in range(2, n-2):
         ident = int(all_cities[i].ident)
-
-        if ident == 1:
-            neighbors.append([2,3])
-        elif ident == 2:
-            neighbors.append([1])
-        elif ident % 2 == 0:
+        if ident % 2 == 0:
             neighbors.append([ident - 2, ident - 1, ident + 2])
         else:
             neighbors.append([ident - 2, ident + 1, ident + 2])
 
-    neighbors[n - 2] = [n - 3, n]
-    if n % 2 == 0:
-        neighbors[n-1] = [n - 3, n]
+    neighbors.append([n - 3, n - 2])            # neighbors of city with id n-1 (position n-2 of list)
+    if n % 2 == 0:                              # neighbors of city with id n   (position n-1 of list)
+        neighbors.append([n - 3, n])
     else:
-        neighbors[n-1] = [n - 2]
-
+        neighbors.append([n - 2])
 
     return neighbors
 
@@ -55,7 +55,6 @@ def insert_neighbors(cities, all_cities, neighbors, actual_city, destiny):
         #calculo da distancia em linha reta da cidade em questao ate o destino
         a.h = h_distance(a, destiny[0])
         a.f = a.g + a.h
-        a.expand = 0
         a.pai = int(cities[actual_city].ident)
         cities.append(City(a.ident, a.name, a.x, a.y, a.pai, a.h, a.g, a.f, 0))
         #APAGAR
@@ -134,7 +133,7 @@ def main():
 
 
         for j in range(n):
-            if cities[j].expand == 0 and cities[j].ident !=:
+            if cities[j].expand == 0:
                 if cities[j].f < cities[actual_city].f:
                     actual_city = j
                 elif cities[actual_city].expand == 1:
