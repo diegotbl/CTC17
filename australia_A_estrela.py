@@ -1,3 +1,5 @@
+import copy
+
 class City:
     def __init__(self, ident, name, x, y, pai, h, g, f, expand ):
         self.ident = ident
@@ -16,27 +18,27 @@ def find_city(all_cities, city):
 
 # Funcao que ira listar os vizinhos de cada cidade
 def verify_neighbors(all_cities):
+    """
+    Evaluates neighbors of each city
+    :param all_cities: list containing all cities objects
+    :return: list of lists containing neighbors id's
+    """
     n = len(all_cities)
-    neighbors = []
+    # Neighbors of first and second cities (id = 1 and 2). Position 0 and 1 in list neighbors.
+    neighbors = [[2, 3], [1, 4]]
 
-    for i in range(n):
+    for i in range(2, n-2):
         ident = int(all_cities[i].ident)
-
-        if ident == 1:
-            neighbors.append([2,3])
-        elif ident == 2:
-            neighbors.append([1])
-        elif ident % 2 == 0:
+        if ident % 2 == 0:
             neighbors.append([ident - 2, ident - 1, ident + 2])
         else:
             neighbors.append([ident - 2, ident + 1, ident + 2])
 
-    neighbors[n - 2] = [n - 3, n]
-    if n % 2 == 0:
-        neighbors[n-1] = [n - 3, n]
+    neighbors.append([n - 3, n - 2])            # neighbors of city with id n-1 (position n-2 of list)
+    if n % 2 == 0:                              # neighbors of city with id n   (position n-1 of list)
+        neighbors.append([n - 3, n])
     else:
-        neighbors[n-1] = [n - 2]
-
+        neighbors.append([n - 2])
 
     return neighbors
 
@@ -46,26 +48,26 @@ def insert_neighbors(cities, all_cities, neighbors, actual_city, destiny):
     #APAGAR
     print("FUNCAO EXPANSAO")
     print(actual_city,"name: ", cities[actual_city].name, "id:",  int(cities[actual_city].ident))
-
+    all_cities[int(cities[actual_city].ident)-1].expand = 1
+    print("bloqueando", all_cities[int(cities[actual_city].ident)-1].name)
     #para todos os vizinhos da cidade atual
     for i in neighbors[int(cities[actual_city].ident)-1]:
-        a = all_cities[i-1]
+        a = copy.deepcopy(all_cities[i-1])
         # a distancia g sera a distancia g da cidade atual mas a distancia real entre as duas cidades
         a.g = cities[actual_city].g + g_distance(a, cities[actual_city])
         #calculo da distancia em linha reta da cidade em questao ate o destino
         a.h = h_distance(a, destiny[0])
         a.f = a.g + a.h
-        a.expand = 0
         a.pai = int(cities[actual_city].ident)
         cities.append(City(a.ident, a.name, a.x, a.y, a.pai, a.h, a.g, a.f, 0))
         #APAGAR
-        print("id:", a.ident,"name", a.name,"f", a.f,"g", a.g,"h", a.h)
+        print("id:", a.ident,"name" "{0:<20}".format(a.name),"f", a.f,"g", a.g,"h", a.h)
 
 
 
 
 # Funcao para calcular a distancia g
-def g_distance (a, b):
+def g_distance (a,b):
     return 1.1*h_distance(a,b)
 
 def h_distance (a,b):
@@ -95,7 +97,7 @@ def main():
     #APAGAR
     print("DADOS DAS CIDADES")
     for i in range(len(all_cities)):
-        print("nome:", all_cities[i].name,"id:", all_cities[i].ident,"vizinhos:", neighbors[i])
+        print("nome:" "{0:<20}".format(all_cities[i].name),"id:" "{0:<3}".format(all_cities[i].ident),"vizinhos:", neighbors[i])
 
     #localizar a cidade de destino (Yulara)
     destiny = [find_city(all_cities, "Yulara")]
@@ -119,7 +121,7 @@ def main():
     actual_city = 0
     cont = 0
     #FAZER O LOOP AQUI
-    while (cities[actual_city].ident != destiny[0].ident and cont<3):
+    while (cities[actual_city].ident != destiny[0].ident and cont < 10):
         #marcar cidade como expandida
         print("-----------------------------------------------------")
         cities[actual_city].expand = 1
@@ -132,18 +134,17 @@ def main():
         n = len(cities)
 
 
-
+        aux = actual_city
         for j in range(n):
-            if cities[j].expand == 0 and cities[j].ident !=:
-                if cities[j].f < cities[actual_city].f:
-                    actual_city = j
-                elif cities[actual_city].expand == 1:
-                    actual_city = j
-
-
+            if cities[j].expand == 0:
+                if (cities[j].f < cities[aux].f or cities[aux].expand == 1) and cities[j].ident != cities[0].ident:
+                    if all_cities[int(cities[j].ident)-1].expand == 0:
+                        aux = j
+        actual_city = aux
         for i in cities:
-            print("i:", i.ident, "name:", i.name, "f:", i.f,"g:", i.g,"h:", i.h, "expand:", i.expand )
+             print("i:", i.ident, "name:" "{0:<20}".format(i.name), "f:", i.f,"g:", i.g,"h:", i.h, "expand:", i.expand )
         cont = cont + 1
+        print(actual_city, "name", cities[actual_city].name, "f", cities[actual_city].f)
     ##ENCERRA O LOOP AQUI
 
     file.close()
