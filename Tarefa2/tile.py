@@ -6,6 +6,8 @@ class Tile:
         self.positions = list(range(1, 81))         # creation of initial board. It will be randomly modified later
         self.positions.append(0)
         self.parent = -1
+        self.f = -1
+        self.g = -1
         self.h = self.manhattan()
         self.expanded = False
 
@@ -42,6 +44,11 @@ class Tile:
 
     def update_h(self):
         self.h = self.manhattan()
+        self.f = self.g + self.h
+
+    def update_g(self):
+        self.g = self.g + 1
+        self.f = self.g + self.h
 
 
 def index_conversion(idx):

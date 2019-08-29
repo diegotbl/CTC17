@@ -19,7 +19,7 @@ def greedy(tile):
         #     print()
         # print("\n\n")
         print("manhattan current: ", expanded_tiles[current_tile].h, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
-        p.present(expanded_tiles[current_tile])
+        # p.present(expanded_tiles[current_tile])
         expanded_tiles[current_tile].expanded = True
         expanded_tiles = append_neighbors(current_tile, expanded_tiles)
         # for t in range(len(expanded_tiles)):
@@ -47,6 +47,36 @@ def greedy(tile):
     p.present(expanded_tiles[current_tile])
 
 
+def A_star(tile):
+    """ Solves problem using greedy algorithm. Prints each step. """
+    expanded_tiles = [tile]
+    current_tile = 0
+    cont = 0
+    list_expanded_tiles_positions = []
+    while not expanded_tiles[current_tile].check_correctness():
+        print("f current: ", expanded_tiles[current_tile].f, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
+        # p.present(expanded_tiles[current_tile])
+        expanded_tiles[current_tile].expanded = True
+        expanded_tiles = append_neighbors(current_tile, expanded_tiles)
+
+        aux = current_tile
+        for i in range(len(expanded_tiles)):
+            if expanded_tiles[i].expanded is False:
+                if expanded_tiles[i].f < expanded_tiles[aux].f or expanded_tiles[aux].expanded is True:
+                    if not (expanded_tiles[i].positions in list_expanded_tiles_positions):
+                        aux = i
+        current_tile = aux
+        list_expanded_tiles_positions.append(expanded_tiles[current_tile].positions)
+
+        expanded_tiles[current_tile].update_h()
+
+        cont = cont + 1
+
+    print("---------- End of search ---------")
+    print("current_tile: ", current_tile, "Manhattan: ", expanded_tiles[current_tile].h)
+    p.present(expanded_tiles[current_tile])
+
+
 def append_neighbors(current_tile, expanded_tiles):
     for i in range(4):          # possible moves
         if mvmt.can_move(expanded_tiles[current_tile], i):
@@ -55,7 +85,8 @@ def append_neighbors(current_tile, expanded_tiles):
             aux_tile.parent = current_tile
             aux_tile = mvmt.move(aux_tile, i)
             aux_tile.update_h()
+            aux_tile.update_g()
             expanded_tiles.append(aux_tile)
-            print("Id: ", len(expanded_tiles)-1, "Manhattan aux_tile: ", aux_tile.h)
+            # print("Id: ", len(expanded_tiles)-1, "Manhattan aux_tile: ", aux_tile.h)
 
     return expanded_tiles
