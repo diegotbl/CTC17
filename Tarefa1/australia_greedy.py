@@ -149,26 +149,6 @@ def main():
     cities[0].g = 0
     cities[0].h = h_distance(cities[0], destiny[0])
     cities[0].f = cities[0].g + cities[0].h
-
-    # A cidade de origem aponta para posicao 0 do vetor cities
-    actual_city = 0
-    # Algoritmo A*
-    while (cities[actual_city].ident != destiny[0].ident):
-        actual_city = a_estrela(cities, all_cities, neighbors, actual_city, destiny)
-
-    route = find_route(cities, actual_city)
-
-    print_route (route, "route_a_estrela.txt")
-
-
-
-    # Insere a primeira cidade (Alice Springs) no vetor e preenche seus atributos
-    cities = [find_city(all_cities, "Alice Springs")]
-    cities[0].pai = -1
-    cities[0].expand = 0
-    cities[0].g = 0
-    cities[0].h = h_distance(cities[0], destiny[0])
-    cities[0].f = cities[0].g + cities[0].h
     actual_city = 0
 
     # cont = 0
