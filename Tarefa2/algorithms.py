@@ -19,7 +19,11 @@ def greedy(tile):
         #     print()
         # print("\n\n")
         print("manhattan current: ", expanded_tiles[current_tile].h, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
+<<<<<<< Updated upstream
         # p.present(expanded_tiles[current_tile])
+=======
+        #p.present(expanded_tiles[current_tile])
+>>>>>>> Stashed changes
         expanded_tiles[current_tile].expanded = True
         expanded_tiles = append_neighbors(current_tile, expanded_tiles)
         # for t in range(len(expanded_tiles)):
@@ -30,7 +34,7 @@ def greedy(tile):
         #             current_tile = t
 
         aux = current_tile
-        for i in range(len(expanded_tiles)):
+        for i in range(len(expanded_tiles) -1, 1, -1):
             if expanded_tiles[i].expanded is False:
                 if expanded_tiles[i].h < expanded_tiles[aux].h or expanded_tiles[aux].expanded is True:
                     if not (expanded_tiles[i].positions in list_expanded_tiles_positions):
@@ -87,6 +91,10 @@ def append_neighbors(current_tile, expanded_tiles):
             aux_tile.update_h()
             aux_tile.update_g()
             expanded_tiles.append(aux_tile)
+<<<<<<< Updated upstream
             # print("Id: ", len(expanded_tiles)-1, "Manhattan aux_tile: ", aux_tile.h)
+=======
+            #print("Id: ", len(expanded_tiles)-1, "Manhattan aux_tile: ", aux_tile.h)
+>>>>>>> Stashed changes
 
     return expanded_tiles

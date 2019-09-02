@@ -15,6 +15,12 @@ class City:
 
 
 def find_city(all_cities, city):
+    """
+    search for a city in vector
+    :param all_cities: list containing all cities objects
+           city: city want to find
+    :return: city finded
+    """
     return next(x for x in all_cities if x.name == city)
 
 def verify_neighbors(all_cities):
@@ -43,54 +49,93 @@ def verify_neighbors(all_cities):
     return neighbors
 
 
-#FUNCAO PARA INSERIR AS CIDADES NA VIZINHANCA E CHAMAR CALCULO DE G(N) E H(N)
+
 def insert_neighbors(cities, all_cities, neighbors, actual_city, destiny):
+    """
+    Inserts all the neighbors of the actual city
+    :param all_cities: list containing all cities objects
+           cities: list containing all cities already visited
+           neighbors: list containing all cities and your neighbors
+           actual_city:
+           destiny: final city, the goal
+    """
     all_cities[int(cities[actual_city].ident)-1].expand = 1
-    #para todos os vizinhos da cidade atual
+    #for each neighbor for the currenty city
     for i in neighbors[int(cities[actual_city].ident)-1]:
         a = copy.deepcopy(all_cities[i-1])
-        # a distancia g sera a distancia g da cidade atual mas a distancia real entre as duas cidades
+        # the distance g will be the distance g of the current city plus
+        # the distance between the current city and the next city
         a.g = cities[actual_city].g + g_distance(a, cities[actual_city])
-        #calculo da distancia em linha reta da cidade em questao ate o destino
         a.h = h_distance(a, destiny[0])
         a.f = a.g + a.h
         a.pai = actual_city
         cities.append(City(a.ident, a.name, a.x, a.y, a.pai, a.h, a.g, a.f, 0))
 
-# Funcao para calcular a distancia g
 def g_distance (a,b):
+    """
+    calculate the real distance between two cities
+    :param a: initial city
+           b: destination city
+    :return distance between two cities
+    """
     return 1.1*h_distance(a,b)
 
 def h_distance (a,b):
+    """
+    calculate estamimate distance between two cities
+    :param a: initial city
+           b: destination city
+    :return distance between two cities
+    """
     return ((float(a.x) - float(b.x))**2 + (float(a.y) - float(b.y))**2)**0.5
 
 def a_estrela (cities, all_cities, neighbors, actual_city, destiny):
-        #marcar cidade como expandida
-        cities[actual_city].expand = 1
-
-        # Inserir todos os vizinhos da actual_city no vetor cities
-        insert_neighbors(cities, all_cities, neighbors, actual_city, destiny)
-        n = len(cities)
-
-
-        aux = actual_city
-        for j in range(n):
-            if cities[j].expand == 0:
-                if (cities[j].f < cities[aux].f or cities[aux].expand == 1) and cities[j].ident != cities[0].ident:
-                    if all_cities[int(cities[j].ident)-1].expand == 0:
-                        aux = j
-        actual_city = aux
-
-        return actual_city
-
-
-def greedy(cities, all_cities, neighbors, actual_city, destiny):
+    """
+    Algorithm A*
+    :param all_cities: list containing all cities objects
+           cities: list containing all cities already visited
+           neighbors: list containing all cities and your neighbors
+           actual_city:
+           destiny: final city, the goal
+    :return the next city to visit
+    """
+    #mark city as visited
     cities[actual_city].expand = 1
 
-    # Inserir todos os vizinhos da actual_city no vetor cities
+    # insert all the neighbors of the current city in the vector cities
     insert_neighbors(cities, all_cities, neighbors, actual_city, destiny)
     n = len(cities)
 
+    # search for the next city to visit, ie, the city with the smallest f
+    aux = actual_city
+    for j in range(n):
+        if cities[j].expand == 0:
+            if (cities[j].f < cities[aux].f or cities[aux].expand == 1) and cities[j].ident != cities[0].ident:
+                if all_cities[int(cities[j].ident)-1].expand == 0:
+                    aux = j
+    actual_city = aux
+
+    return actual_city
+
+
+def greedy(cities, all_cities, neighbors, actual_city, destiny):
+    """
+    Algorithm Greedy*
+    :param all_cities: list containing all cities objects
+           cities: list containing all cities already visited
+           neighbors: list containing all cities and your neighbors
+           actual_city:
+           destiny: final city, the goal
+    :return the next city to visit
+    """
+    cities[actual_city].expand = 1
+
+    # insert all the neighbors of the current city in the vector cities
+    insert_neighbors(cities, all_cities, neighbors, actual_city, destiny)
+    n = len(cities)
+
+
+    # search for the next city to visit, ie, the city with the smallest h
     aux = actual_city
     for j in range(n):
         if cities[j].expand == 0:
@@ -102,7 +147,14 @@ def greedy(cities, all_cities, neighbors, actual_city, destiny):
 
 
     return actual_city
+
 def find_route (cities, actual_city):
+    """
+    search for the cities that will be part of the route
+    :param all_cities: list containing all cities objects
+           cities: list containing all cities already visited
+    :return list of cities that will be part of the route
+    """
     i = cities[actual_city]
     route = []
     route.append(i)
@@ -112,6 +164,11 @@ def find_route (cities, actual_city):
     return route
 
 def print_route (route, nome):
+    """
+     Print the route
+     :param route: list of cities that will be part of the route
+            nome: name of file where route will be printed
+     """
     cont = 1
     route.reverse()
     traject = open(nome, "w")
@@ -128,18 +185,18 @@ def main():
 
     all_cities = []
 
-    # Realizar a leitura das cidades do arquivo e armazenar em um vetor
+    # read all cities and their coordinates from de file
     for line in file:
         info = line.split(",")
         all_cities.append(City(info[0], info[1], info[2], info[3], -1, 0, 0, 0, 0))
 
-    # Retira a primeira linha (cabeçalho) do vetor
+    # Remove the first line
     all_cities = all_cities[1:]
 
-    # Obtem a lista de todos as cidades e seus vizinhos
+    # get list of all cities and their neighbors
     neighbors = verify_neighbors(all_cities)
 
-    #localizar a cidade de destino (Yulara)
+    # find de final city (Yulara)
     destiny = [find_city(all_cities, "Yulara")]
 
     # Insere a primeira cidade (Alice Springs) no vetor e preenche seus atributos
@@ -160,26 +217,6 @@ def main():
 
     print_route (route, "route_a_estrela.txt")
 
-
-
-    # Insere a primeira cidade (Alice Springs) no vetor e preenche seus atributos
-    cities = [find_city(all_cities, "Alice Springs")]
-    cities[0].pai = -1
-    cities[0].expand = 0
-    cities[0].g = 0
-    cities[0].h = h_distance(cities[0], destiny[0])
-    cities[0].f = cities[0].g + cities[0].h
-    actual_city = 0
-
-    # cont = 0
-    # while (cities[actual_city].ident != destiny[0].ident):
-    #
-    #     actual_city = greedy(cities, all_cities, neighbors, actual_city, destiny)
-    #     cont = cont + 1
-    #
-    # route = find_route(cities, actual_city)
-    #
-    # print_route (route, "route_greedy.txt")
 
     file.close()
 
