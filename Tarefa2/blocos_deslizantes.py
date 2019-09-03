@@ -4,7 +4,7 @@ import Tarefa2.example as example
 
 
 def main():
-    tile = example.example5()   # choose your initial board here
+    tile = example.example2()   # choose your initial board here
 
     tile.update_h()
     print("Initial Manhattan distance: ", tile.h)
