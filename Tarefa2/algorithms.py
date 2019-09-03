@@ -1,16 +1,15 @@
-from Tarefa2.tile import Tile
 import Tarefa2.presentation as p
 import Tarefa2.movement as mvmt
-import math
 import copy
 
 
 def greedy(tile):
-    """ Solves problem using greedy algorithm. Prints each step. """
+    """ Solves problem using greedy algorithm. """
     expanded_tiles = [tile]
     current_tile = 0
     cont = 0
     list_expanded_tiles_positions = []
+    print("-------- Starting Greedy ---------\n..................................")
     while not expanded_tiles[current_tile].check_correctness():
         # print("\n\nList of boards on graph: ")
         # for i in range(len(expanded_tiles)):
@@ -18,8 +17,7 @@ def greedy(tile):
         #     p.present(expanded_tiles[i])
         #     print()
         # print("\n\n")
-        print("manhattan current: ", expanded_tiles[current_tile].h, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
-<<<<<<< Updated upstream
+        # print("manhattan current: ", expanded_tiles[current_tile].h, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
         # p.present(expanded_tiles[current_tile])
 =======
         #p.present(expanded_tiles[current_tile])
@@ -47,19 +45,22 @@ def greedy(tile):
         cont = cont + 1
 
     print("---------- End of search ---------")
-    print("current_tile: ", current_tile, "Manhattan: ", expanded_tiles[current_tile].h)
-    p.present(expanded_tiles[current_tile])
+    print("Answer found")
+    print("------------ Traceback -----------")
+    print("The following moves solve the problem: ")
+    cost = backtrack(expanded_tiles, current_tile)
+    return cost
 
 
-def A_star(tile):
+def a_star(tile):
     """ Solves problem using greedy algorithm. Prints each step. """
     expanded_tiles = [tile]
     current_tile = 0
     cont = 0
     list_expanded_tiles_positions = []
+    print("-------- Starting A-star ---------\n..................................")
     while not expanded_tiles[current_tile].check_correctness():
-        print("f current: ", expanded_tiles[current_tile].f, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
-        # p.present(expanded_tiles[current_tile])
+        # print("f current: ", expanded_tiles[current_tile].f, ". Id:", current_tile, "Pai: ", expanded_tiles[current_tile].parent)
         expanded_tiles[current_tile].expanded = True
         expanded_tiles = append_neighbors(current_tile, expanded_tiles)
 
@@ -77,8 +78,11 @@ def A_star(tile):
         cont = cont + 1
 
     print("---------- End of search ---------")
-    print("current_tile: ", current_tile, "Manhattan: ", expanded_tiles[current_tile].h)
-    p.present(expanded_tiles[current_tile])
+    print("Answer found")
+    print("------------ Traceback -----------")
+    print("The following moves solve the problem: ")
+    cost = backtrack(expanded_tiles, current_tile)
+    return cost
 
 
 def append_neighbors(current_tile, expanded_tiles):
@@ -98,3 +102,15 @@ def append_neighbors(current_tile, expanded_tiles):
 >>>>>>> Stashed changes
 
     return expanded_tiles
+
+
+def backtrack(expanded_tiles, current_tile):
+    path = [expanded_tiles[current_tile]]
+
+    while path[-1].parent != -1:
+        path.append(expanded_tiles[path[-1].parent])
+
+    for i in range(len(path)-1, -1, -1):
+        p.present(path[i])
+
+    return len(path)-1

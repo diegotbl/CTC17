@@ -8,18 +8,7 @@ def move(tile, direction):
     :return: modified tile object
     """
     if can_move(tile, direction) is False:
-        # print("impossible move")
         return tile
-
-    # print("Movement: ", end='')
-    # if direction == 0:
-    #     print("up")
-    # if direction == 1:
-    #     print("right")
-    # if direction == 2:
-    #     print("down")
-    # if direction == 3:
-    #     print("left")
 
     idx = tile.positions.index(0)
 
@@ -78,10 +67,13 @@ def can_move(tile, direction):
         return True
 
 
-def randomize(tile):
+def randomize(tile, n):
     """ Generates random moves """
-    number_of_moves = random.randrange(1000, 5001, 1000)  # random.randrange(10000, 50001, 10000)
-    print(number_of_moves)
+    if n == 0:
+        number_of_moves = random.randrange(10, 100, 1)  # random.randrange(10000, 50001, 10000)
+    else:
+        number_of_moves = n
+    print("Initial moves: ", number_of_moves)
     for i in range(number_of_moves):
         random_direction = random.randrange(0, 4)
         tile = move(tile, random_direction)

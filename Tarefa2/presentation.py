@@ -3,6 +3,7 @@ def present(tile):
         print(tile.positions[i], "\t", end='')
         if i % 9 - 8 == 0:
             print()
+    print()
 
 
 def print_tiles_list(tiles):
